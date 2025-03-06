@@ -9,7 +9,7 @@ the password protection removed, append `unlocked-` to the beginning
 of the filename, and saves them into a `docxfree_unlocked` directory.
 A copy is created to avoid potential corruption of the original file.
 
-> ![WARNING]
+> [!WARNING]
 > Only works on `.docx` files. (Office 2007 or newer)
 > Will NOT work with `.doc` files.
 
