@@ -15,6 +15,26 @@ A copy is created to avoid potential corruption of the original file.
 
 ## Installation
 
+### Manual Installation
+
+Clone the repo:
+
+```sh
+git clone https://github.com/nronzel/docxfree.git
+
+cd docxfree
+```
+
+Build the program:
+
+```sh
+go build
+```
+
+### Release
+
+Download the correct binary from the latest [release](https://github.com/nronzel/docxfree/releases).
+
 ## Usage
 
 ### Arguments
