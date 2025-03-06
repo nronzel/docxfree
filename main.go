@@ -52,19 +52,41 @@ func createOutputPath(cfg Args) error {
 }
 
 func batchProcessDocx(cfg Args) error {
-	files, err := os.ReadDir(cfg.inputPath)
+	return processDirectory(cfg.inputPath, 1, cfg.depth)
+}
+
+func processDirectory(dirPath string, currentDepth, maxDepth int) error {
+	files, err := os.ReadDir(dirPath)
 	if err != nil {
-		return err
+		return fmt.Errorf("reading directory %s: %w", dirPath, err)
+	}
+
+	outputDir := filepath.Join(dirPath, OutputPath)
+	if err := os.MkdirAll(outputDir, 0700); err != nil {
+		return fmt.Errorf("creating output directory %s: %w", outputDir, err)
 	}
 
 	for _, file := range files {
+		fullPath := filepath.Join(dirPath, file.Name())
+
 		if file.IsDir() {
+			if file.Name() == OutputPath {
+				continue
+			}
+
+			if currentDepth < maxDepth {
+				if err := processDirectory(fullPath, currentDepth+1, maxDepth); err != nil {
+					return err
+				}
+			}
 			continue
 		}
+
 		if strings.HasSuffix(file.Name(), ".docx") {
-			op := filepath.Join(cfg.inputPath, OutputPath, "unprotected-"+file.Name())
-			err := processDocx(file.Name(), op)
-			if err != nil {
+			outputPath := filepath.Join(outputDir, "unprotected-"+file.Name())
+			fmt.Printf("Processing: %s\n", fullPath)
+
+			if err := processDocx(fullPath, outputPath); err != nil {
 				return err
 			}
 		}
@@ -75,11 +97,13 @@ func batchProcessDocx(cfg Args) error {
 type Args struct {
 	inputFile string
 	inputPath string
+	depth     int
 }
 
 func parseArgs(args *Args) {
 	flag.StringVar(&args.inputFile, "f", "", "protected .docx filename")
 	flag.StringVar(&args.inputPath, "p", "", "directory of .docx files for batch operation")
+	flag.IntVar(&args.depth, "d", 1, "recursion depth")
 	flag.Parse()
 }
 
@@ -90,7 +114,12 @@ func validateArgs(cfg Args) {
 	}
 
 	if cfg.inputFile != "" && !strings.HasSuffix(cfg.inputFile, ".docx") {
-		fmt.Printf("file must be a '.docx'")
+		fmt.Println("file must be a '.docx'")
+		os.Exit(1)
+	}
+
+	if cfg.depth < 0 {
+		fmt.Println("depth must be greater than 0")
 		os.Exit(1)
 	}
 }

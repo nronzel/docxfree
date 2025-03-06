@@ -6,7 +6,7 @@ Removes password protection from `.docx` files.
 Forgot the password to your `.docx` file?
 This utility will create a copy of the original file with
 the password protection removed, append `unlocked-` to the beginning
-of the filename, and saves them into a `docxfree_unlocked` directory.
+of the filename, and saves them into a `docxfreed/` directory.
 A copy is created to avoid potential corruption of the original file.
 
 > [!WARNING]
@@ -37,12 +37,18 @@ Download the correct binary from the latest [release](https://github.com/nronzel
 
 ## Usage
 
+You can specify a single filename, or a path to a directory.
+
+If you specify a path, you can also specify an optional depth argument if there are
+sub-directories that contain `.docx` files that you need processed.
+
 ### Arguments
 
-| Arg       | Description                        |
-| --------- | ---------------------------------- |
-| -f (file) | Specify a single .docx file        |
-| -p (path) | Specify a directory of .docx files |
+| Arg        | Description                              |
+| ---------- | ---------------------------------------- |
+| -f (file)  | Specify a single .docx file.             |
+| -p (path)  | Specify a directory of .docx files.      |
+| -d (depth) | \*Optional - Recursion depth. Default: 1 |
 
 Example:
 
@@ -50,6 +56,7 @@ Example:
 docxfree -f document.docx
 # or
 docxfree -p documents/
+docxfree -p documents/ -d 2
 ```
 
 ## How It Works
